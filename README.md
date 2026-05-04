@@ -83,9 +83,9 @@ npm run dev
 Once started, access:
 
 - **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:8080
-- **API Documentation**: http://localhost:8080/docs
-- **MCP Endpoint**: http://localhost:8080/mcp
+- **Backend API**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs
+- **MCP Endpoint**: http://localhost:8000/mcp
 
 ## 📚 Documentation
 

@@ -23,6 +23,7 @@ def seed():
         User(name="Heidi", email="heidi@europa.com"),
         User(name="Ivan", email="ivan@asteroidbelt.com"),
         User(name="Judy", email="judy@pluto.com"),
+        User(name="Sudip", email="sudroych@in.ibm.com"),
     ]
     db.add_all(users)
     db.commit()

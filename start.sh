@@ -52,7 +52,7 @@ python server.py &
 BACKEND_PID=$!
 cd ..
 
-echo -e "${GREEN}✅ Backend started on http://localhost:8080${NC}"
+echo -e "${GREEN}✅ Backend started on http://localhost:8000${NC}"
 echo ""
 
 # Wait a moment for backend to start
@@ -78,9 +78,9 @@ echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "🌟 Galaxium Travels is running!"
 echo ""
-echo "   Backend:  http://localhost:8080"
+echo "   Backend:  http://localhost:8000"
 echo "   Frontend: http://localhost:5173"
-echo "   API Docs: http://localhost:8080/docs"
+echo "   API Docs: http://localhost:8000/docs"
 echo ""
 echo "Press Ctrl+C to stop all servers"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
