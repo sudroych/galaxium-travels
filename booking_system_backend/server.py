@@ -7,6 +7,8 @@ from typing import Union
 from db import SessionLocal, init_db, get_db
 from seed import seed
 from services import flight, user, booking
+from services.email import email_service
+from models import User, Flight, Booking
 from schemas import FlightOut, BookingOut, UserOut, ErrorResponse, BookingRequest, UserRegistration
 
 
@@ -92,6 +94,58 @@ def get_user_id(name: str, email: str) -> UserOut:
         result = user.get_user(db, name, email)
         if isinstance(result, ErrorResponse):
             raise Exception(result.details or result.error)
+        return result
+    finally:
+        db.close()
+
+
+@mcp.tool()
+def send_booking_confirmation_email(booking_id: int) -> dict:
+    """Send a booking confirmation email for a specific booking.
+    
+    Retrieves booking details from the database and sends a confirmation email
+    to the user's registered email address. Works in both SMTP mode (if configured)
+    or console logging mode (for development/testing).
+    
+    Args:
+        booking_id: The ID of the booking to send confirmation for
+        
+    Returns:
+        dict: Status of the email sending operation with success flag and message
+        
+    Raises:
+        Exception: If booking not found or email sending fails
+    """
+    db = SessionLocal()
+    try:
+        # Get booking details
+        booking_record = db.query(Booking).filter(Booking.booking_id == booking_id).first()
+        if not booking_record:
+            raise Exception(f"Booking #{booking_id} not found")
+        
+        # Get user details
+        user_record = db.query(User).filter(User.user_id == booking_record.user_id).first()
+        if not user_record:
+            raise Exception(f"User not found for booking #{booking_id}")
+        
+        # Get flight details
+        flight_record = db.query(Flight).filter(Flight.flight_id == booking_record.flight_id).first()
+        if not flight_record:
+            raise Exception(f"Flight not found for booking #{booking_id}")
+        
+        # Send email
+        result = email_service.send_booking_confirmation(
+            to_email=str(user_record.email),
+            user_name=str(user_record.name),
+            booking_id=int(booking_record.booking_id),
+            flight_origin=str(flight_record.origin),
+            flight_destination=str(flight_record.destination),
+            departure_time=str(flight_record.departure_time),
+            arrival_time=str(flight_record.arrival_time),
+            price=float(flight_record.price),
+            booking_time=str(booking_record.booking_time)
+        )
+        
         return result
     finally:
         db.close()

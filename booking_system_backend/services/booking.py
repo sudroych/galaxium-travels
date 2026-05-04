@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 from models import User, Flight, Booking
 from schemas import BookingOut, ErrorResponse
+from services.email import email_service
 
 
 def book_flight(db: Session, user_id: int, name: str, flight_id: int) -> BookingOut | ErrorResponse:
@@ -51,6 +52,24 @@ def book_flight(db: Session, user_id: int, name: str, flight_id: int) -> Booking
     db.add(new_booking)
     db.commit()
     db.refresh(new_booking)
+    
+    # Send booking confirmation email
+    try:
+        email_service.send_booking_confirmation(
+            to_email=str(user.email),
+            user_name=str(user.name),
+            booking_id=int(new_booking.booking_id),
+            flight_origin=str(flight.origin),
+            flight_destination=str(flight.destination),
+            departure_time=str(flight.departure_time),
+            arrival_time=str(flight.arrival_time),
+            price=float(flight.price),
+            booking_time=str(new_booking.booking_time)
+        )
+    except Exception as e:
+        # Log error but don't fail the booking
+        print(f"Warning: Failed to send booking confirmation email: {e}")
+    
     return BookingOut.model_validate(new_booking)
 
 

@@ -8,3 +8,4 @@ pytest
 pytest-asyncio
 pytest-cov
 httpx
+# Email functionality uses built-in smtplib, email.mime modules
